@@ -24,6 +24,9 @@ public class ReservationController {
     public ResponseEntity<Reservation> createReservation(
             @RequestBody ReservationCreateRequest request
     ) {
+        if (request.name() == null || request.date() == null || request.time() == null) {
+            throw new MissingParameterException();
+        }
         Reservation newReservation = new Reservation(index.incrementAndGet(), request.name(), request.date(), request.time());
         reservations.add(newReservation);
         return ResponseEntity.created(URI.create("/reservations/" + newReservation.getId())).body(newReservation);
@@ -31,7 +34,19 @@ public class ReservationController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Reservation> deleteReservation(@PathVariable Long id) {
-        reservations.removeIf(reservation -> reservation.getId().equals(id));
+        if (!reservations.removeIf(reservation -> reservation.getId().equals(id))) {
+            throw new NotFoundReservationException();
+        }
         return ResponseEntity.noContent().build();
+    }
+
+    @ExceptionHandler(MissingParameterException.class)
+    public ResponseEntity<Void> handleMissingParameterException(MissingParameterException e) {
+        return ResponseEntity.badRequest().build();
+    }
+
+    @ExceptionHandler(NotFoundReservationException.class)
+    public ResponseEntity<Void> handleNotFoundReservationException(NotFoundReservationException e) {
+        return ResponseEntity.badRequest().build();
     }
 }
