@@ -3,6 +3,7 @@ package roomescape.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import roomescape.controller.dto.ReservationCreateRequest;
+import roomescape.controller.dto.ReservationResponse;
 import roomescape.domain.Reservation;
 import roomescape.exception.MissingParameterException;
 import roomescape.exception.NotFoundReservationException;
@@ -20,18 +21,23 @@ public class ReservationController {
     private final AtomicLong index = new AtomicLong();
 
     @GetMapping
-    public ResponseEntity<List<Reservation>> getReservations() {
-        return ResponseEntity.ok(reservations);
+    public ResponseEntity<List<ReservationResponse>> getReservations() {
+        return ResponseEntity.ok(
+                reservations.stream()
+                        .map(ReservationResponse::from)
+                        .toList()
+        );
     }
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(
+    public ResponseEntity<ReservationResponse> createReservation(
             @RequestBody ReservationCreateRequest request
     ) {
         checkMissingParameter(request);
         Reservation newReservation = new Reservation(index.incrementAndGet(), request.name(), request.date(), request.time());
         reservations.add(newReservation);
-        return ResponseEntity.created(URI.create("/reservations/" + newReservation.getId())).body(newReservation);
+        ReservationResponse response = ReservationResponse.from(newReservation);
+        return ResponseEntity.created(URI.create("/reservations/" + response.id())).body(response);
     }
 
     private void checkMissingParameter(ReservationCreateRequest request) {
@@ -41,7 +47,7 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Reservation> deleteReservation(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteReservation(@PathVariable Long id) {
         removeReservationOrException(id);
         return ResponseEntity.noContent().build();
     }
@@ -53,7 +59,7 @@ public class ReservationController {
     }
 
     @ExceptionHandler(MissingParameterException.class)
-    public ResponseEntity<Void> handleMissingParameterException(MissingParameterException e) {
+    public ResponseEntity<String> handleMissingParameterException(MissingParameterException e) {
         return ResponseEntity.badRequest().build();
     }
 
