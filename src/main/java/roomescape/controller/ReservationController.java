@@ -3,6 +3,7 @@ package roomescape.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import roomescape.controller.dto.ReservationCreateRequest;
+import roomescape.controller.dto.ReservationResponse;
 import roomescape.domain.Reservation;
 import roomescape.exception.MissingParameterException;
 import roomescape.exception.NotFoundReservationException;
@@ -20,12 +21,15 @@ public class ReservationController {
     private final AtomicLong index = new AtomicLong();
 
     @GetMapping
-    public ResponseEntity<List<Reservation>> getReservations() {
-        return ResponseEntity.ok(reservations);
+    public ResponseEntity<List<ReservationResponse>> getReservations() {
+        List<ReservationResponse> reservationResponses = reservations.stream()
+                .map(ReservationResponse::from)
+                .toList();
+        return ResponseEntity.ok(reservationResponses);
     }
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(
+    public ResponseEntity<ReservationResponse> createReservation(
             @RequestBody ReservationCreateRequest request
     ) {
         if (request.name() == null || request.date() == null || request.time() == null) {
@@ -33,11 +37,12 @@ public class ReservationController {
         }
         Reservation newReservation = new Reservation(index.incrementAndGet(), request.name(), request.date(), request.time());
         reservations.add(newReservation);
-        return ResponseEntity.created(URI.create("/reservations/" + newReservation.getId())).body(newReservation);
+        ReservationResponse response = ReservationResponse.from(newReservation);
+        return ResponseEntity.created(URI.create("/reservations/" + response.id())).body(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Reservation> deleteReservation(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteReservation(@PathVariable Long id) {
         if (!reservations.removeIf(reservation -> reservation.getId().equals(id))) {
             throw new NotFoundReservationException();
         }
