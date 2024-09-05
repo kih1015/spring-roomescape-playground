@@ -1,11 +1,11 @@
 package roomescape.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import roomescape.controller.dto.ReservationCreateRequest;
 import roomescape.controller.dto.ReservationResponse;
 import roomescape.domain.Reservation;
-import roomescape.exception.MissingParameterException;
 import roomescape.exception.NotFoundReservationException;
 
 import java.net.URI;
@@ -30,11 +30,8 @@ public class ReservationController {
 
     @PostMapping
     public ResponseEntity<ReservationResponse> createReservation(
-            @RequestBody ReservationCreateRequest request
+            @Valid @RequestBody ReservationCreateRequest request
     ) {
-        if (request.name() == null || request.date() == null || request.time() == null) {
-            throw new MissingParameterException();
-        }
         Reservation newReservation = new Reservation(index.incrementAndGet(), request.name(), request.date(), request.time());
         reservations.add(newReservation);
         ReservationResponse response = ReservationResponse.from(newReservation);
@@ -42,16 +39,13 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReservation(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteReservation(
+            @PathVariable Long id
+    ) {
         if (!reservations.removeIf(reservation -> reservation.getId().equals(id))) {
             throw new NotFoundReservationException();
         }
         return ResponseEntity.noContent().build();
-    }
-
-    @ExceptionHandler(MissingParameterException.class)
-    public ResponseEntity<Void> handleMissingParameterException(MissingParameterException e) {
-        return ResponseEntity.badRequest().build();
     }
 
     @ExceptionHandler(NotFoundReservationException.class)
