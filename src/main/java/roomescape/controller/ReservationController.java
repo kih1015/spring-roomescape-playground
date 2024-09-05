@@ -2,6 +2,7 @@ package roomescape.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import roomescape.controller.dto.ReservationCreateRequest;
 import roomescape.controller.dto.ReservationResponse;
@@ -17,15 +18,29 @@ import java.util.concurrent.atomic.AtomicLong;
 @RequestMapping("/reservations")
 public class ReservationController {
 
+    private final JdbcTemplate jdbcTemplate;
     private final List<Reservation> reservations = new ArrayList<>();
     private final AtomicLong index = new AtomicLong();
 
+    public ReservationController(final JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @GetMapping
     public ResponseEntity<List<ReservationResponse>> getReservations() {
-        List<ReservationResponse> reservationResponses = reservations.stream()
+        List<Reservation> reservations = jdbcTemplate.query(
+                "select * from reservation",
+                (rs, rowNum) -> new Reservation(
+                        rs.getLong("id"),
+                        rs.getString("name"),
+                        rs.getDate("date").toLocalDate(),
+                        rs.getTime("time").toLocalTime()
+                )
+        );
+        List<ReservationResponse> response = reservations.stream()
                 .map(ReservationResponse::from)
                 .toList();
-        return ResponseEntity.ok(reservationResponses);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
