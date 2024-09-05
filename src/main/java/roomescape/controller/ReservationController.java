@@ -47,9 +47,4 @@ public class ReservationController {
         }
         return ResponseEntity.noContent().build();
     }
-
-    @ExceptionHandler(NotFoundReservationException.class)
-    public ResponseEntity<Void> handleNotFoundReservationException(NotFoundReservationException e) {
-        return ResponseEntity.badRequest().build();
-    }
 }
