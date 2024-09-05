@@ -9,25 +9,25 @@ import java.time.LocalTime;
 
 public record ReservationResponse(
 
-        @NotNull
-        Long id,
+    @NotNull
+    Long id,
 
-        @NotBlank
-        String name,
+    @NotBlank
+    String name,
 
-        @NotNull
-        LocalDate date,
+    @NotNull
+    LocalDate date,
 
-        @NotNull
-        LocalTime time
+    @NotNull
+    LocalTime time
 ) {
 
     public static ReservationResponse from(Reservation reservation) {
         return new ReservationResponse(
-                reservation.getId(),
-                reservation.getName(),
-                reservation.getDate(),
-                reservation.getTime()
+            reservation.getId(),
+            reservation.getName(),
+            reservation.getDate(),
+            reservation.getTime()
         );
     }
 }

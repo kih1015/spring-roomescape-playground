@@ -24,41 +24,41 @@ public class ReservationController {
     private final SimpleJdbcInsert jdbcInsert;
 
     public ReservationController(
-            JdbcTemplate jdbcTemplate,
-            DataSource source
+        JdbcTemplate jdbcTemplate,
+        DataSource source
     ) {
         this.jdbcTemplate = jdbcTemplate;
         this.jdbcInsert = new SimpleJdbcInsert(source)
-                .withTableName("reservation")
-                .usingGeneratedKeyColumns("id");
+            .withTableName("reservation")
+            .usingGeneratedKeyColumns("id");
     }
 
     @GetMapping
     public ResponseEntity<List<ReservationResponse>> getReservations() {
         List<Reservation> reservations = jdbcTemplate.query(
-                "select * from reservation",
-                getReservationRowMapper()
+            "select * from reservation",
+            getReservationRowMapper()
         );
         List<ReservationResponse> response = reservations.stream()
-                .map(ReservationResponse::from)
-                .toList();
+            .map(ReservationResponse::from)
+            .toList();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping
     public ResponseEntity<ReservationResponse> createReservation(
-            @Valid @RequestBody ReservationCreateRequest request
+        @Valid @RequestBody ReservationCreateRequest request
     ) {
         Map<String, Object> params = Map.of(
-                "name", request.name(),
-                "date", request.date(),
-                "time", request.time()
+            "name", request.name(),
+            "date", request.date(),
+            "time", request.time()
         );
         long id = jdbcInsert.executeAndReturnKey(params).longValue();
         Reservation newReservation = jdbcTemplate.queryForObject(
-                "select * from reservation where id = ?",
-                getReservationRowMapper(),
-                id
+            "select * from reservation where id = ?",
+            getReservationRowMapper(),
+            id
         );
         ReservationResponse response = ReservationResponse.from(newReservation);
         return ResponseEntity.created(URI.create("/reservations/" + id)).body(response);
@@ -66,16 +66,16 @@ public class ReservationController {
 
     private RowMapper<Reservation> getReservationRowMapper() {
         return (rs, rowNum) -> new Reservation(
-                rs.getLong("id"),
-                rs.getString("name"),
-                rs.getDate("date").toLocalDate(),
-                rs.getTime("time").toLocalTime()
+            rs.getLong("id"),
+            rs.getString("name"),
+            rs.getDate("date").toLocalDate(),
+            rs.getTime("time").toLocalTime()
         );
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteReservation(
-            @PathVariable Long id
+        @PathVariable Long id
     ) {
         int count = jdbcTemplate.update("DELETE FROM reservation WHERE id = ?", id);
         if (count == 0) {

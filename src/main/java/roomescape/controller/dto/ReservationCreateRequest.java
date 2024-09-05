@@ -8,13 +8,13 @@ import java.time.LocalTime;
 
 public record ReservationCreateRequest(
 
-        @NotBlank
-        String name,
+    @NotBlank
+    String name,
 
-        @NotNull
-        LocalDate date,
+    @NotNull
+    LocalDate date,
 
-        @NotNull
-        LocalTime time
+    @NotNull
+    LocalTime time
 ) {
 }
