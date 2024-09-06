@@ -35,11 +35,11 @@ public class ReservationController {
 
     @GetMapping
     public ResponseEntity<List<ReservationResponse>> getReservations() {
-        List<Reservation> reservations = jdbcTemplate.query(
-            "select * from reservation",
-            getReservationRowMapper()
-        );
-        List<ReservationResponse> response = reservations.stream()
+        String sql = "select * from reservation";
+        List<ReservationResponse> response = jdbcTemplate.query(
+                sql,
+                getReservationRowMapper()
+            ).stream()
             .map(ReservationResponse::from)
             .toList();
         return ResponseEntity.ok(response);
@@ -55,8 +55,9 @@ public class ReservationController {
             "time", request.time()
         );
         long id = jdbcInsert.executeAndReturnKey(params).longValue();
+        String sql = "select * from reservation where id = ?";
         Reservation newReservation = jdbcTemplate.queryForObject(
-            "select * from reservation where id = ?",
+            sql,
             getReservationRowMapper(),
             id
         );
@@ -77,7 +78,8 @@ public class ReservationController {
     public ResponseEntity<Void> deleteReservation(
         @PathVariable Long id
     ) {
-        int count = jdbcTemplate.update("DELETE FROM reservation WHERE id = ?", id);
+        String sql = "delete from reservation where id = ?";
+        int count = jdbcTemplate.update(sql, id);
         if (count == 0) {
             throw new NotFoundReservationException();
         }
