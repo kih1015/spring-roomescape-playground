@@ -87,11 +87,15 @@ public class ReservationController {
 
     private Optional<Reservation> getReservationById(Long id) {
         String sql = "select * from reservation where id = ?";
-        Reservation newReservation = jdbcTemplate.queryForObject(
-            sql,
-            getReservationRowMapper(),
-            id
-        );
-        return Optional.ofNullable(newReservation);
+        try {
+            Reservation newReservation = jdbcTemplate.queryForObject(
+                sql,
+                getReservationRowMapper(),
+                id
+            );
+            return Optional.ofNullable(newReservation);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 }
