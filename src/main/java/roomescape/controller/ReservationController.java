@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/reservations")
@@ -78,11 +79,19 @@ public class ReservationController {
     public ResponseEntity<Void> deleteReservation(
         @PathVariable Long id
     ) {
+        getReservationById(id).orElseThrow(NotFoundReservationException::new);
         String sql = "delete from reservation where id = ?";
-        int count = jdbcTemplate.update(sql, id);
-        if (count == 0) {
-            throw new NotFoundReservationException();
-        }
+        jdbcTemplate.update(sql, id);
         return ResponseEntity.noContent().build();
+    }
+
+    private Optional<Reservation> getReservationById(Long id) {
+        String sql = "select * from reservation where id = ?";
+        Reservation newReservation = jdbcTemplate.queryForObject(
+            sql,
+            getReservationRowMapper(),
+            id
+        );
+        return Optional.ofNullable(newReservation);
     }
 }
