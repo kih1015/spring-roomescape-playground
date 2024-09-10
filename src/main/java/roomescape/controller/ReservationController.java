@@ -1,64 +1,101 @@
 package roomescape.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.web.bind.annotation.*;
 import roomescape.controller.dto.ReservationCreateRequest;
+import roomescape.controller.dto.ReservationResponse;
 import roomescape.domain.Reservation;
-import roomescape.exception.MissingParameterException;
 import roomescape.exception.NotFoundReservationException;
 
+import javax.sql.DataSource;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/reservations")
 public class ReservationController {
 
-    private final List<Reservation> reservations = new ArrayList<>();
-    private final AtomicLong index = new AtomicLong();
+    private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
+
+    public ReservationController(
+        JdbcTemplate jdbcTemplate,
+        DataSource source
+    ) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.jdbcInsert = new SimpleJdbcInsert(source)
+            .withTableName("reservation")
+            .usingGeneratedKeyColumns("id");
+    }
 
     @GetMapping
-    public ResponseEntity<List<Reservation>> getReservations() {
-        return ResponseEntity.ok(reservations);
+    public ResponseEntity<List<ReservationResponse>> getReservations() {
+        String sql = "select * from reservation";
+        List<ReservationResponse> response = jdbcTemplate.query(
+                sql,
+                getReservationRowMapper()
+            ).stream()
+            .map(ReservationResponse::from)
+            .toList();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(
-            @RequestBody ReservationCreateRequest request
+    public ResponseEntity<ReservationResponse> createReservation(
+        @Valid @RequestBody ReservationCreateRequest request
     ) {
-        checkMissingParameter(request);
-        Reservation newReservation = new Reservation(index.incrementAndGet(), request.name(), request.date(), request.time());
-        reservations.add(newReservation);
-        return ResponseEntity.created(URI.create("/reservations/" + newReservation.getId())).body(newReservation);
+        Map<String, Object> params = Map.of(
+            "name", request.name(),
+            "date", request.date(),
+            "time", request.time()
+        );
+        long id = jdbcInsert.executeAndReturnKey(params).longValue();
+        String sql = "select * from reservation where id = ?";
+        Reservation newReservation = jdbcTemplate.queryForObject(
+            sql,
+            getReservationRowMapper(),
+            id
+        );
+        ReservationResponse response = ReservationResponse.from(newReservation);
+        return ResponseEntity.created(URI.create("/reservations/" + id)).body(response);
     }
 
-    private static void checkMissingParameter(ReservationCreateRequest request) {
-        if (request.name() == null || request.date() == null || request.time() == null) {
-            throw new MissingParameterException();
-        }
+    private RowMapper<Reservation> getReservationRowMapper() {
+        return (rs, rowNum) -> new Reservation(
+            rs.getLong("id"),
+            rs.getString("name"),
+            rs.getDate("date").toLocalDate(),
+            rs.getTime("time").toLocalTime()
+        );
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Reservation> deleteReservation(@PathVariable Long id) {
-        checkNotFoundReservation(id);
+    public ResponseEntity<Void> deleteReservation(
+        @PathVariable Long id
+    ) {
+        getReservationById(id).orElseThrow(NotFoundReservationException::new);
+        String sql = "delete from reservation where id = ?";
+        jdbcTemplate.update(sql, id);
         return ResponseEntity.noContent().build();
     }
 
-    private void checkNotFoundReservation(Long id) {
-        if (!reservations.removeIf(reservation -> reservation.getId().equals(id))) {
-            throw new NotFoundReservationException();
+    private Optional<Reservation> getReservationById(Long id) {
+        String sql = "select * from reservation where id = ?";
+        try {
+            Reservation newReservation = jdbcTemplate.queryForObject(
+                sql,
+                getReservationRowMapper(),
+                id
+            );
+            return Optional.ofNullable(newReservation);
+        } catch (Exception e) {
+            return Optional.empty();
         }
-    }
-
-    @ExceptionHandler(MissingParameterException.class)
-    public ResponseEntity<Void> handleMissingParameterException(MissingParameterException e) {
-        return ResponseEntity.badRequest().build();
-    }
-
-    @ExceptionHandler(NotFoundReservationException.class)
-    public ResponseEntity<Void> handleNotFoundReservationException(NotFoundReservationException e) {
-        return ResponseEntity.badRequest().build();
     }
 }
