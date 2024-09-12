@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record ReservationResponse(
-
     @NotNull
     Long id,
 
@@ -19,7 +18,7 @@ public record ReservationResponse(
     LocalDate date,
 
     @NotNull
-    LocalTime time
+    InnerTime time
 ) {
 
     public static ReservationResponse from(Reservation reservation) {
@@ -27,7 +26,16 @@ public record ReservationResponse(
             reservation.getId(),
             reservation.getName(),
             reservation.getDate(),
-            reservation.getTime()
+            new InnerTime(
+                reservation.getTime().getId(),
+                reservation.getTime().getTime()
+            )
         );
+    }
+
+    record InnerTime(
+        Long id,
+        LocalTime time
+    ) {
     }
 }

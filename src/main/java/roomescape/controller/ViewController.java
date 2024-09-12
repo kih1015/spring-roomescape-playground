@@ -8,7 +8,7 @@ public class ViewController {
 
     @GetMapping("/reservation")
     public String getReservationPage() {
-        return "reservation";
+        return "new-reservation";
     }
 
     @GetMapping("/time")

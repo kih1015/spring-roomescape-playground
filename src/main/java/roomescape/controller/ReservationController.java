@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import roomescape.controller.dto.ReservationCreateRequest;
 import roomescape.controller.dto.ReservationResponse;
 import roomescape.domain.Reservation;
+import roomescape.domain.Time;
 import roomescape.exception.NotFoundReservationException;
 
 import javax.sql.DataSource;
@@ -36,7 +37,15 @@ public class ReservationController {
 
     @GetMapping
     public ResponseEntity<List<ReservationResponse>> getReservations() {
-        String sql = "select * from reservation";
+        String sql = """
+            SELECT
+                r.id as reservation_id,
+                r.name,
+                r.date,
+                t.id as time_id,
+                t.time as time_value
+            FROM reservation as r inner join time as t on r.time_id = t.id
+            """;
         List<ReservationResponse> response = jdbcTemplate.query(
                 sql,
                 getReservationRowMapper()
@@ -53,25 +62,24 @@ public class ReservationController {
         Map<String, Object> params = Map.of(
             "name", request.name(),
             "date", request.date(),
-            "time", request.time()
+            "time_id", request.time()
         );
         long id = jdbcInsert.executeAndReturnKey(params).longValue();
-        String sql = "select * from reservation where id = ?";
-        Reservation newReservation = jdbcTemplate.queryForObject(
-            sql,
-            getReservationRowMapper(),
-            id
+        ReservationResponse response = ReservationResponse.from(
+            getReservationById(id).orElseThrow(NotFoundReservationException::new)
         );
-        ReservationResponse response = ReservationResponse.from(newReservation);
         return ResponseEntity.created(URI.create("/reservations/" + id)).body(response);
     }
 
     private RowMapper<Reservation> getReservationRowMapper() {
         return (rs, rowNum) -> new Reservation(
-            rs.getLong("id"),
+            rs.getLong("reservation_id"),
             rs.getString("name"),
             rs.getDate("date").toLocalDate(),
-            rs.getTime("time").toLocalTime()
+            new Time(
+                rs.getLong("time_id"),
+                rs.getTime("time_value").toLocalTime()
+            )
         );
     }
 
@@ -86,7 +94,16 @@ public class ReservationController {
     }
 
     private Optional<Reservation> getReservationById(Long id) {
-        String sql = "select * from reservation where id = ?";
+        String sql = """
+            SELECT
+                r.id as reservation_id,
+                r.name,
+                r.date,
+                t.id as time_id,
+                t.time as time_value
+            FROM reservation as r inner join time as t on r.time_id = t.id
+            WHERE r.id = ?
+            """;
         try {
             Reservation newReservation = jdbcTemplate.queryForObject(
                 sql,
