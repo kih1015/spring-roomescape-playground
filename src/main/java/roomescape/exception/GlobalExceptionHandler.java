@@ -13,6 +13,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().build();
     }
 
+    @ExceptionHandler(NotFoundTimeException.class)
+    public ResponseEntity<Void> handleNotFoundTimeException(NotFoundTimeException e) {
+        return ResponseEntity.badRequest().build();
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception e) {
         return ResponseEntity.internalServerError().body(e.getMessage());
