@@ -12,7 +12,6 @@ import roomescape.domain.reservation.domain.Time;
 import roomescape.domain.reservation.exception.NotFoundTimeException;
 
 @Service
-@Transactional(readOnly = true)
 public class TimeService {
 
     private final TimeDao timeDao;
