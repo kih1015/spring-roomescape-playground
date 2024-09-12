@@ -1,18 +1,18 @@
-package roomescape.service;
+package roomescape.domain.reservation.service;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import roomescape.dto.ReservationCreateRequest;
-import roomescape.dto.ReservationResponse;
-import roomescape.dao.ReservationDao;
-import roomescape.dao.TimeDao;
-import roomescape.domain.Reservation;
-import roomescape.domain.Time;
-import roomescape.exception.NotFoundReservationException;
-import roomescape.exception.NotFoundTimeException;
+import roomescape.domain.reservation.dto.ReservationCreateRequest;
+import roomescape.domain.reservation.dto.ReservationResponse;
+import roomescape.domain.reservation.dao.ReservationDao;
+import roomescape.domain.reservation.dao.TimeDao;
+import roomescape.domain.reservation.domain.Reservation;
+import roomescape.domain.reservation.domain.Time;
+import roomescape.domain.reservation.exception.NotFoundReservationException;
+import roomescape.domain.reservation.exception.NotFoundTimeException;
 
 @Service
 @Transactional(readOnly = true)

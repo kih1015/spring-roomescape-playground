@@ -1,4 +1,4 @@
-package roomescape.dao;
+package roomescape.domain.reservation.dao;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import roomescape.domain.Time;
+import roomescape.domain.reservation.domain.Time;
 
 @Repository
 @Transactional(readOnly = true)
