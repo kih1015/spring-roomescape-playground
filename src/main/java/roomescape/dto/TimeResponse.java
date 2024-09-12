@@ -1,9 +1,8 @@
-package roomescape.controller.dto;
-
-import jakarta.validation.constraints.NotNull;
-import roomescape.domain.Time;
+package roomescape.dto;
 
 import java.time.LocalTime;
+
+import roomescape.domain.Time;
 
 public record TimeResponse(
     Long id,

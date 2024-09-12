@@ -1,14 +1,15 @@
 package roomescape.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import roomescape.controller.dto.TimeCreateRequest;
-import roomescape.controller.dto.TimeResponse;
+
+import roomescape.dto.TimeCreateRequest;
+import roomescape.dto.TimeResponse;
 import roomescape.dao.TimeDao;
 import roomescape.domain.Time;
 import roomescape.exception.NotFoundTimeException;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
