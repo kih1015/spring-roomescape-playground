@@ -41,16 +41,21 @@ public class TimeDao {
 
     public Optional<Time> findById(Long id) {
         String sql = "select * from time where id = ?";
-        try {
-            Time newTime = jdbcTemplate.queryForObject(
-                sql,
-                getTimeRowMapper(),
-                id
-            );
-            return Optional.ofNullable(newTime);
-        } catch (Exception e) {
-            return Optional.empty();
-        }
+        Time newTime = jdbcTemplate.queryForObject(
+            sql,
+            getTimeRowMapper(),
+            id
+        );
+        return Optional.ofNullable(newTime);
+    }
+
+    public Time getById(Long id) {
+        String sql = "select * from time where id = ?";
+        return jdbcTemplate.queryForObject(
+            sql,
+            getTimeRowMapper(),
+            id
+        );
     }
 
     @Transactional
@@ -58,7 +63,7 @@ public class TimeDao {
         Map<String, LocalTime> params = Map.of(
             "time", time.getTime()
         );
-        return findById(jdbcInsert.executeAndReturnKey(params).longValue()).get();
+        return getById(jdbcInsert.executeAndReturnKey(params).longValue());
     }
 
     @Transactional

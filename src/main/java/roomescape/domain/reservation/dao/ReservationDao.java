@@ -65,16 +65,30 @@ public class ReservationDao {
             FROM reservation as r inner join time as t on r.time_id = t.id
             WHERE r.id = ?
             """;
-        try {
-            Reservation newReservation = jdbcTemplate.queryForObject(
-                sql,
-                getReservationRowMapper(),
-                id
-            );
-            return Optional.ofNullable(newReservation);
-        } catch (Exception e) {
-            return Optional.empty();
-        }
+        Reservation reservation = jdbcTemplate.queryForObject(
+            sql,
+            getReservationRowMapper(),
+            id
+        );
+        return Optional.ofNullable(reservation);
+    }
+
+    public Reservation getById(Long id) {
+        String sql = """
+            SELECT
+                r.id as reservation_id,
+                r.name,
+                r.date,
+                t.id as time_id,
+                t.time as time_value
+            FROM reservation as r inner join time as t on r.time_id = t.id
+            WHERE r.id = ?
+            """;
+        return jdbcTemplate.queryForObject(
+            sql,
+            getReservationRowMapper(),
+            id
+        );
     }
 
     @Transactional
@@ -84,7 +98,7 @@ public class ReservationDao {
             "date", reservation.getDate(),
             "time_id", reservation.getTime().getId()
         );
-        return findById(jdbcInsert.executeAndReturnKey(params).longValue()).get();
+        return getById(jdbcInsert.executeAndReturnKey(params).longValue());
     }
 
     @Transactional
