@@ -6,10 +6,7 @@ import roomescape.domain.Time;
 import java.time.LocalTime;
 
 public record TimeResponse(
-    @NotNull
     Long id,
-
-    @NotNull
     LocalTime time
 ) {
 

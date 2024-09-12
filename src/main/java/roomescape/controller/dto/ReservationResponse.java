@@ -8,16 +8,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record ReservationResponse(
-    @NotNull
     Long id,
-
-    @NotBlank
     String name,
-
-    @NotNull
     LocalDate date,
-
-    @NotNull
     InnerTime time
 ) {
 
