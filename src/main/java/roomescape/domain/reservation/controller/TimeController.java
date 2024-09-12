@@ -44,7 +44,7 @@ public class TimeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<TimeResponse> deleteTime(
+    public ResponseEntity<Void> deleteTime(
         @PathVariable Long id
     ) {
         timeService.deleteTime(id);
