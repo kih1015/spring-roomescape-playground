@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import roomescape.domain.reservation.dto.ReservationCreateRequest;
 import roomescape.domain.reservation.dto.ReservationResponse;
 import roomescape.domain.reservation.dao.ReservationDao;
@@ -15,15 +16,12 @@ import roomescape.domain.reservation.exception.NotFoundReservationException;
 import roomescape.domain.reservation.exception.NotFoundTimeException;
 
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ReservationService {
 
     private final ReservationDao reservationDao;
     private final TimeDao timeDao;
-
-    public ReservationService(ReservationDao reservationDao, TimeDao timeDao) {
-        this.reservationDao = reservationDao;
-        this.timeDao = timeDao;
-    }
 
     public List<ReservationResponse> getReservations() {
         return reservationDao.findAll().stream()
@@ -35,12 +33,11 @@ public class ReservationService {
     public ReservationResponse createReservation(ReservationCreateRequest reservationCreateRequest) {
         Time time = timeDao.findById(reservationCreateRequest.time())
             .orElseThrow(NotFoundTimeException::new);
-        Reservation reservation = new Reservation(
-            null,
-            reservationCreateRequest.name(),
-            reservationCreateRequest.date(),
-            time
-        );
+        Reservation reservation = Reservation.builder()
+            .name(reservationCreateRequest.name())
+            .date(reservationCreateRequest.date())
+            .time(time)
+            .build();
         return ReservationResponse.from(reservationDao.save(reservation));
     }
 

@@ -30,15 +30,16 @@ public class ReservationDao {
     }
 
     private RowMapper<Reservation> getReservationRowMapper() {
-        return (rs, rowNum) -> new Reservation(
-            rs.getLong("reservation_id"),
-            rs.getString("name"),
-            rs.getDate("date").toLocalDate(),
-            new Time(
-                rs.getLong("time_id"),
-                rs.getTime("time_value").toLocalTime()
-            )
-        );
+        return (rs, rowNum) -> Reservation.builder()
+            .id(rs.getLong("reservation_id"))
+            .name(rs.getString("name"))
+            .date(rs.getDate("date").toLocalDate())
+            .time(
+                Time.builder()
+                .id(rs.getLong("time_id"))
+                .time(rs.getTime("time_value").toLocalTime())
+                .build()
+            ).build();
     }
 
     public List<Reservation> findAll() {

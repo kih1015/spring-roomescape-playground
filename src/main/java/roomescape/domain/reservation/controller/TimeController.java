@@ -13,21 +13,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import roomescape.domain.reservation.dto.TimeCreateRequest;
 import roomescape.domain.reservation.dto.TimeResponse;
 import roomescape.domain.reservation.service.TimeService;
 
 @RestController
 @RequestMapping("/times")
+@RequiredArgsConstructor
 public class TimeController {
 
-    TimeService timeService;
-
-    public TimeController(
-        TimeService timeService
-    ) {
-        this.timeService = timeService;
-    }
+    private final TimeService timeService;
 
     @GetMapping
     public ResponseEntity<List<TimeResponse>> getTimes() {
