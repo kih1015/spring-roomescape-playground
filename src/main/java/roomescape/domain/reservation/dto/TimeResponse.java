@@ -9,7 +9,7 @@ public record TimeResponse(
     LocalTime time
 ) {
 
-    static public TimeResponse from(Time time) {
+    public static TimeResponse from(Time time) {
         return new TimeResponse(time.getId(), time.getTime());
     }
 }
