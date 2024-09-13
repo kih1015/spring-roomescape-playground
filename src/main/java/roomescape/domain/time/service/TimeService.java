@@ -1,4 +1,4 @@
-package roomescape.domain.reservation.service;
+package roomescape.domain.time.service;
 
 import java.util.List;
 
@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import roomescape.domain.reservation.dto.TimeCreateRequest;
-import roomescape.domain.reservation.dto.TimeResponse;
-import roomescape.domain.reservation.dao.TimeDao;
-import roomescape.domain.reservation.domain.Time;
-import roomescape.domain.reservation.exception.NotFoundTimeException;
+import roomescape.domain.time.dto.TimeCreateRequest;
+import roomescape.domain.time.dto.TimeResponse;
+import roomescape.domain.time.dao.TimeDao;
+import roomescape.domain.time.domain.Time;
+import roomescape.domain.time.exception.NotFoundTimeException;
 
 @Service
 @Transactional(readOnly = true)

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import roomescape.domain.reservation.exception.NotFoundReservationException;
-import roomescape.domain.reservation.exception.NotFoundTimeException;
+import roomescape.domain.time.exception.NotFoundTimeException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {

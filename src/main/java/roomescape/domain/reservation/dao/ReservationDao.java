@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import roomescape.domain.reservation.domain.Reservation;
-import roomescape.domain.reservation.domain.Time;
+import roomescape.domain.time.domain.Time;
 
 @Repository
 @Transactional(readOnly = true)

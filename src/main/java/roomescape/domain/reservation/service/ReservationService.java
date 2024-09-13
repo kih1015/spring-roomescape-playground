@@ -9,11 +9,11 @@ import lombok.RequiredArgsConstructor;
 import roomescape.domain.reservation.dto.ReservationCreateRequest;
 import roomescape.domain.reservation.dto.ReservationResponse;
 import roomescape.domain.reservation.dao.ReservationDao;
-import roomescape.domain.reservation.dao.TimeDao;
+import roomescape.domain.time.dao.TimeDao;
 import roomescape.domain.reservation.domain.Reservation;
-import roomescape.domain.reservation.domain.Time;
+import roomescape.domain.time.domain.Time;
 import roomescape.domain.reservation.exception.NotFoundReservationException;
-import roomescape.domain.reservation.exception.NotFoundTimeException;
+import roomescape.domain.time.exception.NotFoundTimeException;
 
 @Service
 @Transactional(readOnly = true)

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import lombok.Builder;
 import lombok.Getter;
+import roomescape.domain.time.domain.Time;
 
 @Builder
 @Getter
