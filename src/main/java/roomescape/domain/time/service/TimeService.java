@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import roomescape.domain.time.dto.TimeCreateRequest;
 import roomescape.domain.time.dto.TimeResponse;
 import roomescape.domain.time.dao.TimeDao;
-import roomescape.domain.time.domain.Time;
+import roomescape.domain.time.model.Time;
 import roomescape.domain.time.exception.NotFoundTimeException;
 
 @Service

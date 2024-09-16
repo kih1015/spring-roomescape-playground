@@ -10,8 +10,8 @@ import roomescape.domain.reservation.dto.ReservationCreateRequest;
 import roomescape.domain.reservation.dto.ReservationResponse;
 import roomescape.domain.reservation.dao.ReservationDao;
 import roomescape.domain.time.dao.TimeDao;
-import roomescape.domain.reservation.domain.Reservation;
-import roomescape.domain.time.domain.Time;
+import roomescape.domain.reservation.model.Reservation;
+import roomescape.domain.time.model.Time;
 import roomescape.domain.reservation.exception.NotFoundReservationException;
 import roomescape.domain.time.exception.NotFoundTimeException;
 

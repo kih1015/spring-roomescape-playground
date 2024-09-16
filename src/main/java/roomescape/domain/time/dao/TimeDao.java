@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import roomescape.domain.time.domain.Time;
+import roomescape.domain.time.model.Time;
 
 @Repository
 @Transactional(readOnly = true)

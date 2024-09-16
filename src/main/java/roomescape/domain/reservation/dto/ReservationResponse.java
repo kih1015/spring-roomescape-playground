@@ -3,7 +3,7 @@ package roomescape.domain.reservation.dto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import roomescape.domain.reservation.domain.Reservation;
+import roomescape.domain.reservation.model.Reservation;
 
 public record ReservationResponse(
     Long id,

@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import roomescape.domain.reservation.controller.ReservationController;
-import roomescape.domain.reservation.domain.Reservation;
+import roomescape.domain.reservation.model.Reservation;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;

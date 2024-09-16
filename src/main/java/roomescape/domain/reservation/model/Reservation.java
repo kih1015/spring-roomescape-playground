@@ -1,10 +1,10 @@
-package roomescape.domain.reservation.domain;
+package roomescape.domain.reservation.model;
 
 import java.time.LocalDate;
 
 import lombok.Builder;
 import lombok.Getter;
-import roomescape.domain.time.domain.Time;
+import roomescape.domain.time.model.Time;
 
 @Builder
 @Getter

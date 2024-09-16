@@ -1,4 +1,4 @@
-package roomescape.domain.time.domain;
+package roomescape.domain.time.model;
 
 import java.time.LocalTime;
 
