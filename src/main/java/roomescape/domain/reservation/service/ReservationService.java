@@ -42,7 +42,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public void cancelReservation(Long id) {
+    public void deleteReservation(Long id) {
         if (reservationDao.findById(id).isEmpty()) {
             throw new NotFoundReservationException();
         }
