@@ -29,8 +29,8 @@ public class TimeDao {
 
     private RowMapper<Time> getTimeRowMapper() {
         return (rs, rowNum) -> Time.builder()
-            .id(rs.getLong("time_id"))
-            .time(rs.getTime("time_value").toLocalTime())
+            .id(rs.getLong("id"))
+            .time(rs.getTime("time").toLocalTime())
             .build();
     }
 
